@@ -1,0 +1,165 @@
+@use "mixin";
+@use "variables";
+
+/* ===== Features CSS ===== */
+
+.ud-features {
+  padding-top: 120px;
+  padding-bottom: 90px;
+  background: #f3f4fe;
+  position: relative;
+  z-index: 1;
+
+  @media #{variables.$xs} {
+    padding-top: 80px;
+    padding-bottom: 40px;
+  }
+
+  .shape {
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    bottom: 0;
+
+    img {
+      max-width: 200px;
+    }
+  }
+}
+
+.ud-section-title {
+  max-width: 620px;
+  margin-bottom: 150px;
+
+  .image-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 0 30px;
+
+    @media screen and (min-width: 576px) {
+      margin: 0 70px 30px;
+    }
+
+    &::before {
+      content: "";
+      width: 70%;
+      height: 70%;
+      max-width: 500px;
+      position: absolute;
+      top: -25px;
+      left: -25px;
+      background: #F99F00;
+      z-index: -1;
+    }
+
+    &.right {
+      &::before {
+        top: -25px;
+        right: -25px;
+        left: auto;
+      }
+    }
+  }
+
+  img {
+    border-bottom: 30px solid #F99F00;
+
+    @media (min-width: 1200px) {
+      max-width: 500px;
+    }
+  }
+
+  span {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 55px;
+    text-transform: capitalize;
+    color: var(--heading-color);
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 20px;
+    line-height: 30px;
+
+    @media #{variables.$xs} {
+      font-size: 16px;
+      line-height: 26px;
+    }
+  }
+}
+
+.ud-single-feature {
+  margin-bottom: 40px;
+
+  &:hover {
+    .ud-feature-icon::before {
+      @include mixin.transform(rotate(45deg));
+    }
+  }
+
+  .ud-feature-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--primary-color);
+    font-size: 32px;
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-bottom: 40px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      border-radius: 14px;
+      background: var(--primary-color);
+      opacity: 0.2;
+      z-index: -1;
+      @include mixin.transform(rotate(23deg));
+      @include mixin.transition(0.3s);
+    }
+  }
+
+  .ud-feature-title {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 28px;
+    margin-bottom: 12px;
+
+    @media #{variables.$lg} {
+      font-size: 18px;
+      line-height: 26px;
+    }
+  }
+
+  .ud-feature-desc {
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 40px;
+  }
+
+  .ud-feature-link {
+    font-weight: 500;
+    color: var(--body-color);
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}

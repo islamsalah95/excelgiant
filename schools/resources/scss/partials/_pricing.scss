@@ -1,0 +1,183 @@
+@use "variables";
+
+/* ===== Pricing CSS ===== */
+
+.ud-pricing {
+  padding-top: 120px;
+  padding-bottom: 90px;
+
+    .pricing-list {
+        display: flex !important;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    @media #{variables.$xs} {
+    padding-top: 80px;
+    padding-bottom: 40px;
+    }
+
+    .sub-title {
+    color: #f99f00;
+    }
+
+    .pricing-box {
+        position: relative;
+        padding: 35px 50px;
+        border-radius: 20px;
+        -webkit-box-shadow: 0px 5px 30px -10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 5px 30px -10px rgba(0, 0, 0, 0.1);
+
+        i {
+            font-size: 14px;
+            padding-right: 5px;
+        }
+    }
+
+    .pricing-box .plan {
+        font-size: 34px;
+    }
+
+    .pricing-badge {
+        font-size: 15px;
+        position: absolute;
+        z-index: 999;
+        top: 0;
+        right: 0;
+        display: block;
+        overflow: hidden;
+        width: 100%;
+        height: 100px;
+        padding: 0;
+    }
+
+    .pricing-badge .badge {
+        font-size: 13px;
+        font-weight: 500;
+        position: relative;
+        top: 17px;
+        right: -67px;
+        float: right;
+        width: 200px;
+        margin: 0;
+        padding: 7px 10px;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        text-align: center;
+        color: #ffffff;
+        background: #f99f00;
+    }
+}
+
+.ud-single-pricing {
+  position: relative;
+  margin-bottom: 40px;
+  padding: 45px 30px;
+  text-align: center;
+  border: 2px solid #d4deff;
+  border-radius: 8px;
+  background: var(--white);
+
+  &.active {
+    padding: 55px 30px;
+    border: none;
+    background: linear-gradient(180deg, #3056d3 0%, #179bee 100%);
+
+    .ud-pricing-header {
+      h3,
+      h4 {
+        color: var(--white);
+      }
+    }
+    .ud-pricing-body {
+      li {
+        color: var(--white);
+      }
+    }
+  }
+
+  &.first-item::after,
+  &.last-item::after {
+    position: absolute;
+    z-index: 1;
+    width: 55px;
+    height: 55px;
+    content: "";
+  }
+
+  &.first-item::after {
+    bottom: -2px;
+    left: -2px;
+    border-radius: 0px 55px 0px 8px;
+    background: #1A62F5;
+  }
+
+  &.last-item::after {
+    top: -2px;
+    right: -2px;
+    border-radius: 0px 8px 0px 55px;
+    background: #F99F00;
+  }
+
+  .ud-popular-tag {
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 25px;
+    color: #fff;
+    border-radius: 30px;
+    background: #F99F00;
+  }
+
+  .ud-pricing-header {
+    h3 {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    h4 {
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 40px;
+      color: var(--primary-color);
+    }
+  }
+
+  .ud-pricing-body {
+    margin-bottom: 40px;
+
+    li {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+  }
+
+  .ud-main-btn {
+    padding: 15px 40px;
+    border-radius: 30px;
+  }
+
+  .ud-border-btn {
+    color: var(--primary-color);
+    border: 1px solid #d4deff;
+    background: var(--white);
+
+    &:hover {
+      color: var(--white);
+      border-color: var(--primary-color);
+      background: var(--primary-color);
+    }
+  }
+  .ud-white-btn {
+    color: var(--heading-color);
+    background: var(--white);
+
+    &:hover {
+      color: var(--white);
+      background: #F99F00;
+    }
+  }
+}

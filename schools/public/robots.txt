@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://business.techsup.tech/sitemap.xml

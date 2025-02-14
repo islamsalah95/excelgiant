@@ -1,0 +1,351 @@
+@use "mixin";
+@use "variables";
+
+/* ===== Header CSS ===== */
+.ud-header {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  @include mixin.transition(0.3s);
+
+  background: #1A62F5;
+
+  &:not(.sticky) {
+    border-bottom: 1px solid #f3f4fe;
+  }
+
+  .lang-change {
+    padding: 4px 8px;
+
+    span {
+      font-size: 16px;
+      font-weight: normal;
+    }
+  }
+}
+
+.sticky {
+  position: fixed !important;
+  z-index: 999;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  @include mixin.box-shadow(inset 0 -1px 0 0 rgba(0, 0, 0, 0.1));
+  @include mixin.transition(0.3s);
+
+  & .navbar {
+    padding: 0;
+  }
+
+  .lang-change {
+    color: var(--heading-color);
+  }
+}
+
+.navbar {
+  padding: 0px 0;
+  border-radius: 5px;
+  position: relative;
+  @include mixin.transition(0.3s);
+}
+
+.navbar-brand {
+  padding: 0;
+
+  @media #{variables.$md, variables.$xs} {
+    padding: 5px 0px;
+  }
+
+  img {
+    max-width: 80px;
+  }
+}
+
+.navbar-toggler {
+  padding: 0;
+
+  & .toggler-icon {
+    width: 30px;
+    height: 2px;
+    background-color: var(--white);
+    display: block;
+    margin: 5px 0;
+    position: relative;
+    @include mixin.transition(0.3s);
+  }
+
+  &.active {
+    & .toggler-icon {
+      &:nth-of-type(1) {
+        @include mixin.transform(rotate(45deg));
+        top: 7px;
+      }
+
+      &:nth-of-type(2) {
+        opacity: 0;
+      }
+
+      &:nth-of-type(3) {
+        @include mixin.transform(rotate(135deg));
+        top: -7px;
+      }
+    }
+  }
+}
+
+.navbar-collapse {
+  @media #{variables.$md, variables.$xs} {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    max-width: 300px;
+    width: 100%;
+    background-color: var(--white);
+    z-index: 9;
+    @include mixin.box-shadow(0px 15px 20px 0px rgba(0, 0, 0, 0.1));
+    padding: 0px;
+    display: none;
+    border-radius: 5px;
+
+    &.show {
+      display: block;
+    }
+  }
+}
+
+.navbar-nav {
+  @media #{variables.$md, variables.$xs} {
+    padding: 20px 30px;
+  }
+
+  & .nav-item {
+    position: relative;
+    padding: 0 20px;
+
+    @media #{variables.$lg} {
+      padding: 0px 12px;
+
+      &.nav-item-has-children {
+        padding: 0 40px 0 20px;
+      }
+    }
+
+    @media #{variables.$md, variables.$xs} {
+      padding: 0px;
+    }
+
+    & > a {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--white);
+      @include mixin.transition(0.3s);
+      padding: 25px 8px;
+      position: relative;
+
+      @media #{variables.$md, variables.$xs} {
+        display: block;
+        padding: 8px 0;
+        color: var(--heading-color);
+      }
+
+      &:hover,
+      &.active {
+        color: var(--white);
+        opacity: 0.7;
+          cursor: pointer;
+
+        @media #{variables.$md, variables.$xs} {
+          color: var(--primary-color);
+          opacity: 1;
+        }
+      }
+    }
+
+    .ud-submenu {
+      position: absolute;
+      width: 250px;
+      background: var(--white);
+      top: 110%;
+      padding: 20px 30px;
+      box-shadow: 0 15px 44px rgba(140, 140, 140, 0.18);
+      border-radius: 5px;
+      opacity: 0;
+      visibility: hidden;
+      @include mixin.transition(0.3s);
+
+      @media #{variables.$md, variables.$xs} {
+        position: static;
+        box-shadow: none;
+        width: 100%;
+        padding: 0px;
+        opacity: 1;
+        visibility: visible;
+        display: none;
+      }
+
+      &.show {
+        display: block;
+      }
+
+      .ud-submenu-link {
+        padding: 7px 0;
+        color: var(--heading-color);
+        font-size: 14px;
+
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
+    }
+
+    &:hover {
+      & > a {
+        color: var(--white);
+        opacity: 0.5;
+
+        @media #{variables.$md, variables.$xs} {
+          color: var(--primary-color);
+          opacity: 1;
+        }
+      }
+
+      & > .ud-submenu {
+        opacity: 1;
+        visibility: visible;
+        top: 100%;
+      }
+    }
+
+    &.nav-item-has-children {
+      & > a {
+        position: relative;
+
+        &::after {
+          content: "";
+          box-sizing: border-box;
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          border-bottom: 2px solid;
+          border-right: 2px solid;
+          transform: rotate(45deg) translateY(-50%);
+          right: -15px;
+          top: 50%;
+          margin-top: -2px;
+
+          @media #{variables.$md, variables.$xs} {
+            right: 5px;
+          }
+        }
+      }
+    }
+  }
+}
+
+[dir="rtl"] {
+  .navbar-btn {
+    @media #{variables.$md, variables.$xs} {
+      left: 50px;
+      right: auto;
+    }
+  }
+
+  //.navbar-nav .nav-item.nav-item-has-children {
+  //  padding: 0 20px 0 40px;
+  //}
+
+  .navbar-nav .nav-item.nav-item-has-children > a::after {
+    left: -15px;
+    right: auto;
+  }
+
+  .ud-submenu {
+    right: 0;
+    left: auto;
+  }
+}
+
+.navbar-btn {
+  @media #{variables.$md, variables.$xs} {
+    position: absolute;
+    top: 50%;
+    right: 50px;
+    @include mixin.transform(translateY(-50%));
+  }
+
+  .ud-main-btn {
+    padding: 8px 16px;
+    background: transparent;
+
+      @media screen and (max-width: 991px) {
+          padding: 2px 8px;
+      }
+  }
+
+  .ud-login-btn {
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
+  .ud-white-btn {
+    background: rgba(255, 255, 255, 0.2);
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      color: var(--heading-color);
+    }
+  }
+}
+
+.sticky {
+  & .navbar-toggler {
+    & .toggler-icon {
+      background-color: var(--heading-color);
+    }
+  }
+
+  & .navbar-nav {
+    & .nav-item {
+      &:hover {
+        & > a {
+          color: var(--primary-color);
+          opacity: 1;
+        }
+      }
+
+      & a {
+        color: var(--heading-color);
+
+        &.active,
+        &:hover {
+          color: var(--primary-color);
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .navbar-btn {
+    .ud-main-btn {
+      &.ud-login-btn {
+        color: var(--heading-color);
+
+        &:hover {
+          color: var(--primary-color);
+          opacity: 1;
+        }
+      }
+    }
+
+    .ud-white-btn {
+      background: var(--primary-color);
+      color: var(--white);
+
+      &:hover {
+        background: var(--heading-color);
+      }
+    }
+  }
+}

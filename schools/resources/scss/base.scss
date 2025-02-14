@@ -1,0 +1,26 @@
+// Template
+@use "partials/variables";
+@use "partials/mixin";
+@use "partials/common";
+@use "partials/header";
+@use "partials/hero";
+@use "partials/features";
+@use "partials/about";
+@use "partials/services";
+@use "partials/pricing";
+@use "partials/timeline";
+@use "partials/faq";
+@use "partials/testimonials";
+@use "partials/team";
+@use "partials/contact";
+@use "partials/footer";
+@use "partials/banner";
+@use "partials/login";
+@use "partials/blog";
+@use "partials/notFound";
+@use "partials/loader";
+
+// Override
+@use "override";
+
+

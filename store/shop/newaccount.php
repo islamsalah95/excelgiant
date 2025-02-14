@@ -1,0 +1,519 @@
+<?php require_once('../connections/connection.php'); ?>
+<?php
+if (!function_exists("GetSQLValueString")) {
+function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
+{
+ global $connection;  // Make sure $connection is defined
+$theValue = mysqli_real_escape_string($connection, $theValue);
+
+  switch ($theType) {
+    case "text":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;    
+    case "long":
+    case "int":
+      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
+      break;
+    case "double":
+      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      break;
+    case "date":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;
+    case "defined":
+      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
+      break;
+  }
+  return $theValue;
+}
+}
+
+// *** Redirect if username exists
+$MM_flag="MM_insert";
+if (isset($_POST[$MM_flag])) {
+  $MM_dupKeyRedirect="errorusername.php";
+  $loginUsername = $_POST['email'];
+  $LoginRS__query = sprintf("SELECT email FROM mostakhdem WHERE email=%s", GetSQLValueString($loginUsername, "text"));
+  mysqli_select_db($connection, "excelgia_mahmdata");
+  $LoginRS=mysqli_query($connection,$LoginRS__query) or die(mysqli_error($connection));
+  $loginFoundUser = mysqli_num_rows($LoginRS);
+
+  //if there is a row in the database, the username was found - can not add the requested username
+  if($loginFoundUser){
+    $MM_qsChar = "?";
+    //append the username to the redirect page
+    if (substr_count($MM_dupKeyRedirect,"?") >=1) $MM_qsChar = "&";
+    $MM_dupKeyRedirect = $MM_dupKeyRedirect . $MM_qsChar ."requsername=".$loginUsername;
+    header ("Location: $MM_dupKeyRedirect");
+    exit;
+  }
+}
+
+$editFormAction = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING'])) {
+  $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
+}
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
+  $insertSQL = sprintf("INSERT INTO mostakhdem (id, name, email, contactno, password, shippingAddress, shippingState, shippingCity, shippingPincode, billingAddress, billingState, billingCity, billingPincode, regDate, updationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                       GetSQLValueString($_POST['id'], "int"),
+                       GetSQLValueString($_POST['name'], "text"),
+                       GetSQLValueString($_POST['email'], "text"),
+                       GetSQLValueString($_POST['contactno'], "int"),
+                       GetSQLValueString($_POST['password'], "text"),
+                       GetSQLValueString($_POST['shippingAddress'], "text"),
+                       GetSQLValueString($_POST['shippingState'], "text"),
+                       GetSQLValueString($_POST['shippingCity'], "text"),
+                       GetSQLValueString($_POST['shippingPincode'], "int"),
+                       GetSQLValueString($_POST['billingAddress'], "text"),
+                       GetSQLValueString($_POST['billingState'], "text"),
+                       GetSQLValueString($_POST['billingCity'], "text"),
+                       GetSQLValueString($_POST['billingPincode'], "int"),
+                       GetSQLValueString($_POST['regDate'], "date"),
+                       GetSQLValueString($_POST['updationDate'], "text"));
+
+  mysqli_select_db($connection, "excelgia_mahmdata");
+  $Result1 = mysqli_query($connection,$insertSQL) or die(mysqli_error($connection));
+
+  $insertGoTo = "login.php";
+  if (isset($_SERVER['QUERY_STRING'])) {
+    $insertGoTo .= (strpos($insertGoTo, '?')) ? "&" : "?";
+    $insertGoTo .= $_SERVER['QUERY_STRING'];
+  }
+  header(sprintf("Location: %s", $insertGoTo));
+}
+
+mysqli_select_db($connection, "excelgia_mahmdata");
+$query_Recordset1 = "SELECT * FROM category ORDER BY id ASC";
+$Recordset1 = mysqli_query($connection,$query_Recordset1) or die(mysqli_error($connection));
+$row_Recordset1 = mysqli_fetch_assoc($Recordset1);
+$totalRows_Recordset1 = mysqli_num_rows($Recordset1);
+
+$colname_rsproducts = "-1";
+if (isset($_GET['id'])) {
+  $colname_rsproducts = $_GET['id'];
+}
+mysqli_select_db($connection, "excelgia_mahmdata");
+$query_rsproducts = sprintf("SELECT * FROM oroudpro WHERE id = %s", GetSQLValueString($colname_rsproducts, "int"));
+$rsproducts = mysqli_query($connection,$query_rsproducts) or die(mysqli_error($connection));
+$row_rsproducts = mysqli_fetch_assoc($rsproducts);
+$totalRows_rsproducts = mysqli_num_rows($rsproducts);
+
+mysqli_select_db($connection, "excelgia_mahmdata");
+$query_Recordset5 = "SELECT * FROM storeinfo ORDER BY id ASC";
+$Recordset5 = mysqli_query($connection,$query_Recordset5) or die(mysqli_error($connection));
+$row_Recordset5 = mysqli_fetch_assoc($Recordset5);
+$totalRows_Recordset5 = mysqli_num_rows($Recordset5);
+
+$maxRows_Recordset6 = 20;
+$pageNum_Recordset6 = 0;
+if (isset($_GET['pageNum_Recordset6'])) {
+  $pageNum_Recordset6 = $_GET['pageNum_Recordset6'];
+}
+$startRow_Recordset6 = $pageNum_Recordset6 * $maxRows_Recordset6;
+
+mysqli_select_db($connection, "excelgia_mahmdata");
+$query_Recordset6 = "SELECT * FROM products ORDER BY RAND()";
+$query_limit_Recordset6 = sprintf("%s LIMIT %d, %d", $query_Recordset6, $startRow_Recordset6, $maxRows_Recordset6);
+$Recordset6 = mysqli_query($connection,$query_limit_Recordset6) or die(mysqli_error($connection));
+$row_Recordset6 = mysqli_fetch_assoc($Recordset6);
+
+if (isset($_GET['totalRows_Recordset6'])) {
+  $totalRows_Recordset6 = $_GET['totalRows_Recordset6'];
+} else {
+  $all_Recordset6 = mysqli_query($connection,$query_Recordset6);
+  $totalRows_Recordset6 = mysqli_num_rows($all_Recordset6);
+}
+$totalPages_Recordset6 = ceil($totalRows_Recordset6/$maxRows_Recordset6)-1;
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title><?php echo $row_Recordset5['first_name']; ?></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">  
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+<script src="../SpryAssets/SpryValidationConfirm.js" type="text/javascript"></script>
+<script src="../SpryAssets/SpryValidationPassword.js" type="text/javascript"></script>
+<script src="../SpryAssets/SpryValidationTextField.js" type="text/javascript"></script>
+<link href="../SpryAssets/SpryValidationConfirm.css" rel="stylesheet" type="text/css">
+<link href="../SpryAssets/SpryValidationPassword.css" rel="stylesheet" type="text/css">
+<link href="../SpryAssets/SpryValidationTextField.css" rel="stylesheet" type="text/css">
+<!-- Primary Meta Tags -->
+<title>شركة فور كي للأنظمة الأمنية وكاميرات المراقبة</title>
+<meta name="title" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة" />
+<meta name="description" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة -السويس - موبايل 66634818 - اطلب الأدوية من خلال موقعنا الالكتروني" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://excelgiants.site/" />
+<meta property="og:title" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة" />
+<meta property="og:description" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة -السويس - موبايل 66634818 - اطلب الأدوية من خلال موقعنا الالكتروني" />
+<meta property="og:image" content="https://excelgiants.site/imageslydia.jpg" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://excelgiants.site/" />
+<meta property="twitter:title" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة" />
+<meta property="twitter:description" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة -السويس - موبايل 66634818 - اطلب الأدوية من خلال موقعنا الالكتروني" />
+<meta property="twitter:image" content="https://excelgiants.site/imageslydia.jpg" />
+
+<!-- Meta Tags Generated with https://metatags.io -->
+<meta name="title" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة">
+<meta name="description" content="شركة فور كي للأنظمة الأمنية وكاميرات المراقبة -السويس - موبايل 66634818 - اطلب الأدوية من خلال موقعنا الالكتروني">
+<meta name="keywords" content="صيدلية, مستحضرات تجميل, , شركة فور كي للأنظمة الأمنية وكاميرات المراقبة">
+<meta name="robots" content="index, follow">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="language" content="Arabic">
+<meta name="revisit-after" content="1 days">
+<meta name="author" content="دكتور دميان مرقص 01005468353">
+<meta property="og:image" content="https://excelgiants.site/logo.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <!-- Topbar Start -->
+
+
+<style>
+.iconat-bar {
+  position: fixed;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  z-index:999;
+}
+
+.iconat-bar a {
+  display: block;
+  text-align: center;
+  padding: 16px;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 20px;
+}
+
+.iconat-bar a:hover {
+  background-color: #000;
+}
+
+.watsapp {
+  background: #55ACEE;
+  color: white;
+}
+
+.call {
+  background: #4fca5d;
+  color: white;
+}
+
+</style>
+
+<div class="iconat-bar">
+  <a href="tel:66634818" class="watsapp" title="اتصل بنا"><i class="fa fa-phone"></i></a> 
+  <a href="https://wa.me/+96566634818" class="call" target="_new" title="راسلنا على الواتساب"><i class="fa fa-whatsapp"></i></a> 
+</div>
+
+    <div class="container-fluid">
+      <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
+        <div class="col-lg-4"> <a href="index.php" class="text-decoration-none"> <img src="finallogo.png" alt="" height="150"> </a> </div>
+        <div class="col-lg-4 col-6 text-left">
+          <form action="search.php" method="get">
+                    <div class="input-group">
+                        <input name="productName" type="text" class="form-control" id="productName" placeholder="البحث عن المنتجات">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-transparent text-primary">
+                                <i class="fa fa-search"></i>
+                            </span>
+                        </div>
+                  </div>
+                </form>
+        </div>
+        <div class="col-lg-4 col-6 text-right">
+          <p class="m-0">خدمة العملاء</p>
+          <h5 class="m-0">66634818</h5>
+        </div>
+      </div>
+    </div>
+    <!-- Topbar End -->
+
+
+    <!-- Navbar Start -->
+    <div class="container-fluid bg-dark mb-30">
+      <div class="row px-xl-5">
+        <div class="col-lg-3 d-none d-lg-block"> <a class="btn d-flex align-items-center justify-content-between bg-primary w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
+          <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i>الفئات</h6>
+          <i class="fa fa-angle-down text-dark"></i> </a>
+          <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 999;">
+            <?php do { ?>
+            <div class="navbar-nav w-100"> <a href="category.php?category=<?php echo $row_Recordset1['categoryName']; ?>" class="nav-item nav-link"><?php echo $row_Recordset1['categoryName']; ?></a> </div>
+            <?php } while ($row_Recordset1 = mysqli_fetch_assoc($Recordset1)); ?>
+          </nav>
+        </div>
+        <div class="col-lg-9">
+          <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0"> <a href="" class="text-decoration-none d-block d-lg-none"> <img src="finallogo1.png" height="100"> </a><form action="search.php" method="get">
+                    <div class="input-group">
+                        <input name="productName" type="text" class="form-control" id="productName" placeholder="البحث عن المنتجات">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-transparent text-primary">
+                                <i class="fa fa-search"></i>
+                            </span>
+                        </div>
+                  </div>
+                </form>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse"> <span class="navbar-toggler-icon"></span> </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+              <div class="navbar-nav mr-auto py-0"> <a href="index.php" class="nav-item nav-link active">الرئيسية</a> <a href="about.php" class="nav-item nav-link">تعرف علينا</a> <a href="contact.php" class="nav-item nav-link">اتصل بنا</a> </div>
+              <div class="navbar-nav ml-auto py-0 d-none d-lg-block"> <a href="" class="btn px-0"> <i class="fas fa-heart text-primary"></i> <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span> </a> <a href="" class="btn px-0 ml-3"> <i class="fas fa-shopping-cart text-primary"></i> <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span> </a> </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <!-- Navbar End -->
+
+
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="index.php">الرئيسية</a>
+                  <span class="breadcrumb-item active">حساب جديد</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Shop Detail Start -->
+    <div class="container-fluid pb-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-5 mb-30">
+            </div>
+        </div>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="bg-light p-30">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-pane-1">
+                            <h4 align="center" class="mb-3">حساب جديد</h4>
+                          <p align="right"></p>
+                          <form method="post" name="form1" action="<?php echo $editFormAction; ?>">
+                            <table align="center" dir="rtl">
+                              <tr valign="baseline">
+                                <td nowrap align="right">الاسم:</td>
+                                <td><span id="sprytextfield6">
+                                  <input type="text" name="name" value="" size="32" >
+                                <span class="textfieldRequiredMsg">*</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">البريد الالكتروني:</td>
+                                <td><span id="sprytextfield5">
+                                  <input type="text" name="email" value="" size="32" >
+                                <span class="textfieldRequiredMsg">*</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">رقم الاتصال:</td>
+                                <td><span id="sprytextfield4">
+                                  <input type="text" name="contactno" value="" size="32" >
+                                <span class="textfieldRequiredMsg">*</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">كلمة المرور:</td>
+                                <td><span id="sprypassword1">
+                                <label for="password"></label>
+                                  <input name="password" type="password" id="password" size="32">
+                                <span class="passwordRequiredMsg">*</span><span class="passwordMinCharsMsg">كلمة المرور يجب ان لا تقل عن 8 حروف وارقام</span><span class="passwordMaxCharsMsg">كلمة المرور يجب ان لا تزيد عن 10 حروف وارقام</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">تأكيد كلمة المرور:</td>
+                                <td><span id="spryconfirm1">
+                                  <label for="text1"></label>
+                                  <input name="text1" type="password" id="text1" size="32">
+                                <span class="confirmRequiredMsg">*</span><span class="confirmInvalidMsg">كلمة المرور غير متطابقة</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">العنوان:</td>
+                                <td><span id="sprytextfield1">
+                                  <input type="text" name="shippingAddress" value="" size="32" >
+                                <span class="textfieldRequiredMsg">*</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">المدينة:</td>
+                                <td><span id="sprytextfield2">
+                                  <input type="text" name="shippingCity" value="" size="32" >
+                                <span class="textfieldRequiredMsg">*</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">الرقم البريدي:</td>
+                                <td><span id="sprytextfield3">
+                                  <input type="text" name="shippingPincode" value="" size="32" >
+                                <span class="textfieldRequiredMsg">*</span></span></td>
+                              </tr>
+                              <tr valign="baseline">
+                                <td nowrap align="right">&nbsp;</td>
+                                <td><input type="submit" value="إضافة" class="btn btn-primary"></td>
+                              </tr>
+                            </table>
+                            <input type="hidden" name="id" value="">
+                            <input type="hidden" name="shippingState" value="">
+                            <input type="hidden" name="billingAddress" value="">
+                            <input type="hidden" name="billingState" value="">
+                            <input type="hidden" name="billingCity" value="">
+                            <input type="hidden" name="billingPincode" value="">
+                            <input type="hidden" name="regDate" value="">
+                            <input type="hidden" name="updationDate" value="">
+                            <input type="hidden" name="MM_insert" value="form1">
+                          </form>
+                          <p>&nbsp;</p>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Detail End -->
+
+
+    <!-- Products Start -->
+    <div class="container-fluid py-5">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">منتجات  قد تعجبك</span></h2>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="owl-carousel related-carousel">
+                    <?php do { ?>
+                    <div class="product-item bg-light">
+                        <div class="product-img position-relative overflow-hidden">
+                          <img class="img-fluid w-100" src="https://new.excelgiants.site/img/<?php echo $row_Recordset6['image']; ?>" alt="">
+                          <div class="product-action">
+                            <a class="btn btn-outline-dark btn-square" href="https://api.whatsapp.com/send?phone=+96566634818&text=طلب شراء صنف من شركة فور كي للأنظمة الأمنية وكاميرات المراقبة - اسم الصنف : <?php echo $row_Recordset6['productName']; ?>. السعر : <?php echo $row_Recordset6['productPrice']; ?> دينار" target="_new"><i class="fa fa-shopping-cart"></i></a>
+                            
+                            
+                            <a class="btn btn-outline-dark btn-square" href="detail.php?id=<?php echo $row_Recordset6['id']; ?>"><i class="fa fa-eye"></i></a>
+                            </div>
+                          </div>
+                        <div class="text-center py-4">
+                          <a class="h6 text-decoration-none text-truncate" href="detail.php?id=<?php echo $row_Recordset6['id']; ?>"><?php echo $row_Recordset6['productName']; ?></a>
+                          <div class="d-flex align-items-center justify-content-center mt-2">
+                            <h5><?php echo $row_Recordset6['productPrice']; ?></h5><h6 class="text-muted ml-2">السعر</h6>
+                            
+                            </div>
+                          </div>
+                      </div>
+                      <?php } while ($row_Recordset6 = mysqli_fetch_assoc($Recordset6)); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Products End -->
+
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-secondary mt-5 pt-5">
+      <div class="row px-xl-5 pt-5">
+        <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
+          <h5 class="text-secondary text-uppercase mb-4"><?php echo $row_Recordset5['first_name']; ?></h5>
+          <p class="mb-4"><?php echo $row_Recordset5['bname']; ?></p>
+          <p class="mb-2"><i class="fas fa-map-marker-alt text-primary mr-3"></i><?php echo $row_Recordset5['work_place']; ?></p>
+          <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i><?php echo $row_Recordset5['grad_place']; ?></p>
+          <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i><?php echo $row_Recordset5['country']; ?></p>
+        </div>
+        <div class="col-lg-8 col-md-12">
+          <div class="row">
+            <div class="col-md-4 mb-5">
+              <h5 class="text-secondary text-uppercase mb-4">روابط الموقع</h5>
+              <div class="d-flex flex-column justify-content-start"> <a class="text-secondary mb-2" href="index.php"><i class="fa fa-angle-right mr-2"></i>الرئيسية</a> <a class="text-secondary mb-2" href="about.php"><i class="fa fa-angle-right mr-2"></i>تعرف علينا</a> <a class="text-secondary" href="contact.php"><i class="fa fa-angle-right mr-2"></i>اتصل بنا</a></div>
+            </div>
+            <div class="col-md-4 mb-5">
+              <h5 class="text-secondary text-uppercase mb-4">حسابي</h5>
+              <div class="d-flex flex-column justify-content-start"> <a class="text-secondary mb-2" href="login.php"><i class="fa fa-angle-right mr-2"></i>تسجيل الدخول</a> <a class="text-secondary mb-2" href="newaccount.php"><i class="fa fa-angle-right mr-2"></i>حساب جديد</a></div>
+            </div>
+            <div class="col-md-4 mb-5">
+              <h5 class="text-secondary text-uppercase mb-4">القائمة البريدية</h5>
+              <p>للحصول على احدث عروضنا سجل بريدك الالكتروني</p>
+              <form action="">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="ادخل بريدك الالكتروني">
+                  <div class="input-group-append">
+                    <button class="btn btn-primary">تسجيل</button>
+                  </div>
+                </div>
+              </form>
+              <h6 class="text-secondary text-uppercase mt-4 mb-3">تابعنا</h6>
+              <div class="d-flex"> <a class="btn btn-primary btn-square mr-2" href="<?php echo $row_Recordset5['create_by']; ?>"><i class="fab fa-facebook-f"></i></a> <a class="btn btn-primary btn-square mr-2" href="<?php echo $row_Recordset5['edit_by']; ?>"><i class="fab fa-linkedin-in"></i></a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row border-top mx-xl-5 py-4" style="border-color: rgba(256, 256, 256, .1) !important;">
+        <div class="col-md-6 px-xl-0" dir="rtl">
+          <p class="mb-md-0 text-center text-md-left text-secondary"> &copy; <a class="text-primary" href="#"><?php echo $row_Recordset5['first_name']; ?></a>. جميع الحقوق محفوظة. تصميم وبرمجة <a href="https://dr-demian.com" target="_new" class="text-primary">دكتور/ دميان مرقص</a></p>
+        </div>
+        <div class="col-md-6 px-xl-0 text-center text-md-right"> <img class="img-fluid" src="img/payments.png" alt=""></div>
+      </div>
+    </div>
+    <!-- Footer End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+<script type="text/javascript">
+var spryconfirm1 = new Spry.Widget.ValidationConfirm("spryconfirm1", "password");
+var sprypassword1 = new Spry.Widget.ValidationPassword("sprypassword1", {minChars:8, maxChars:10});
+var sprytextfield1 = new Spry.Widget.ValidationTextField("sprytextfield1");
+var sprytextfield2 = new Spry.Widget.ValidationTextField("sprytextfield2");
+var sprytextfield3 = new Spry.Widget.ValidationTextField("sprytextfield3");
+var sprytextfield4 = new Spry.Widget.ValidationTextField("sprytextfield4");
+var sprytextfield5 = new Spry.Widget.ValidationTextField("sprytextfield5");
+var sprytextfield6 = new Spry.Widget.ValidationTextField("sprytextfield6");
+</script>
+</body>
+
+</html>
+<?php
+mysqli_free_result($Recordset1);
+
+mysqli_free_result($rsproducts);
+
+mysqli_free_result($Recordset5);
+
+mysqli_free_result($Recordset6);
+?>

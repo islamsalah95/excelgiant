@@ -1,0 +1,731 @@
+<?php require_once('../connections/connection.php'); ?>
+<?php
+//initialize the session
+if (!isset($_SESSION)) {
+  session_start();
+}
+
+// ** Logout the current user. **
+$logoutAction = $_SERVER['PHP_SELF']."?doLogout=true";
+if ((isset($_SERVER['QUERY_STRING'])) && ($_SERVER['QUERY_STRING'] != "")){
+  $logoutAction .="&". htmlentities($_SERVER['QUERY_STRING']);
+}
+
+if ((isset($_GET['doLogout'])) &&($_GET['doLogout']=="true")){
+  //to fully log out a visitor we need to clear the session varialbles
+  $_SESSION['MM_Username'] = NULL;
+  $_SESSION['MM_UserGroup'] = NULL;
+  $_SESSION['PrevUrl'] = NULL;
+  unset($_SESSION['MM_Username']);
+  unset($_SESSION['MM_UserGroup']);
+  unset($_SESSION['PrevUrl']);
+	
+  $logoutGoTo = "../files/index.php";
+  if ($logoutGoTo) {
+    header("Location: $logoutGoTo");
+    exit;
+  }
+}
+?>
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+$MM_authorizedUsers = "";
+$MM_donotCheckaccess = "true";
+
+// *** Restrict Access To Page: Grant or deny access to this page
+function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) { 
+  // For security, start by assuming the visitor is NOT authorized. 
+  $isValid = False; 
+
+  // When a visitor has logged into this site, the Session variable MM_Username set equal to their username. 
+  // Therefore, we know that a user is NOT logged in if that Session variable is blank. 
+  if (!empty($UserName)) { 
+    // Besides being logged in, you may restrict access to only certain users based on an ID established when they login. 
+    // Parse the strings into arrays. 
+    $arrUsers = Explode(",", $strUsers); 
+    $arrGroups = Explode(",", $strGroups); 
+    if (in_array($UserName, $arrUsers)) { 
+      $isValid = true; 
+    } 
+    // Or, you may restrict access to only certain users based on their username. 
+    if (in_array($UserGroup, $arrGroups)) { 
+      $isValid = true; 
+    } 
+    if (($strUsers == "") && true) { 
+      $isValid = true; 
+    } 
+  } 
+  return $isValid; 
+}
+
+$MM_restrictGoTo = "../files/index.php";
+if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {   
+  $MM_qsChar = "?";
+  $MM_referrer = $_SERVER['PHP_SELF'];
+  if (strpos($MM_restrictGoTo, "?")) $MM_qsChar = "&";
+  if (isset($_SERVER['QUERY_STRING']) && strlen($_SERVER['QUERY_STRING']) > 0) 
+  $MM_referrer .= "?" . $_SERVER['QUERY_STRING'];
+  $MM_restrictGoTo = $MM_restrictGoTo. $MM_qsChar . "accesscheck=" . urlencode($MM_referrer);
+  header("Location: ". $MM_restrictGoTo); 
+  exit;
+}
+?>
+<?php
+if (!function_exists("GetSQLValueString")) {
+function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
+{
+ global $connection;  // Make sure $connection is defined
+$theValue = mysqli_real_escape_string($connection, $theValue);
+
+  switch ($theType) {
+    case "text":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;    
+    case "long":
+    case "int":
+      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
+      break;
+    case "double":
+      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      break;
+    case "date":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;
+    case "defined":
+      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
+      break;
+  }
+  return $theValue;
+}
+}
+
+
+
+
+
+
+$editFormAction = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING'])) {
+  $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
+}
+
+if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
+  $updateSQL = sprintf("UPDATE slidat SET member_type=%s, grad_img=%s, per_img=%s, first_name=%s, bname=%s, cname=%s, last_name=%s, grad_date=%s, grad_place=%s, id_card=%s, address=%s, work_place=%s, mail=%s, phone=%s, mobile=%s, member_activity=%s, sub_syndicate=%s, bank=%s, payment_no=%s, password=%s, username=%s, active=%s, create_date=%s, edit_date=%s, create_by=%s, edit_by=%s, deleted=%s WHERE id=%s",
+                       GetSQLValueString($_POST['member_type'], "text"),
+                       GetSQLValueString($_POST['grad_img'], "text"),
+                       GetSQLValueString($_POST['per_img'], "text"),
+                       GetSQLValueString($_POST['first_name'], "text"),
+                       GetSQLValueString($_POST['bname'], "text"),
+                       GetSQLValueString($_POST['cname'], "text"),
+                       GetSQLValueString($_POST['last_name'], "text"),
+                       GetSQLValueString($_POST['grad_date'], "date"),
+                       GetSQLValueString($_POST['grad_place'], "text"),
+                       GetSQLValueString($_POST['id_card'], "int"),
+                       GetSQLValueString($_POST['address'], "text"),
+                       GetSQLValueString($_POST['work_place'], "text"),
+                       GetSQLValueString($_POST['mail'], "text"),
+                       GetSQLValueString($_POST['phone'], "text"),
+                       GetSQLValueString($_POST['mobile'], "text"),
+                       GetSQLValueString($_POST['member_activity'], "text"),
+                       GetSQLValueString($_POST['sub_syndicate'], "int"),
+                       GetSQLValueString($_POST['bank'], "int"),
+                       GetSQLValueString($_POST['payment_no'], "text"),
+                       GetSQLValueString($_POST['password'], "text"),
+                       GetSQLValueString($_POST['username'], "text"),
+                       GetSQLValueString($_POST['active'], "int"),
+                       GetSQLValueString($_POST['create_date'], "date"),
+                       GetSQLValueString($_POST['edit_date'], "date"),
+                       GetSQLValueString($_POST['create_by'], "int"),
+                       GetSQLValueString($_POST['edit_by'], "int"),
+                       GetSQLValueString($_POST['deleted'], "int"),
+                       GetSQLValueString($_POST['id'], "int"));
+
+  mysqli_select_db($connection, "excelgia_mahmdata");
+  $Result1 = mysqli_query($connection,$updateSQL) or die(mysqli_error($connection));
+
+  $updateGoTo = "account.php";
+  if (isset($_SERVER['QUERY_STRING'])) {
+    $updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
+    $updateGoTo .= $_SERVER['QUERY_STRING'];
+  }
+  header(sprintf("Location: %s", $updateGoTo));
+}
+
+
+
+
+
+$colname_Recordset1 = $_SESSION['MM_Username'];
+if (isset($_GET['username'])) {
+  $colname_Recordset1 = $_GET['username'];
+}
+mysqli_select_db($connection, "excelgia_mahmdata");
+$query_Recordset1 = sprintf("SELECT * FROM slidat WHERE username = %s", GetSQLValueString($colname_Recordset1, "text"));
+$Recordset1 = mysqli_query($connection,$query_Recordset1) or die(mysqli_error($connection));
+$row_Recordset1 = mysqli_fetch_assoc($Recordset1);
+$totalRows_Recordset1 = mysqli_num_rows($Recordset1);
+
+
+
+mysqli_select_db($connection, "excelgia_mahmdata");
+$query_Recordsettowns = "SELECT * FROM towns";
+$Recordsettowns = mysqli_query($connection,$query_Recordsettowns) or die(mysqli_error($connection));
+$row_Recordsettowns = mysqli_fetch_assoc($Recordsettowns);
+$totalRows_Recordsettowns = mysqli_num_rows($Recordsettowns);
+
+
+
+
+
+mysqli_select_db($connection, "excelgia_mahmdata");
+$query_Recordsetbanks = "SELECT * FROM banks";
+$Recordsetbanks = mysqli_query($connection,$query_Recordsetbanks) or die(mysqli_error($connection));
+$row_Recordsetbanks = mysqli_fetch_assoc($Recordsetbanks);
+$totalRows_Recordsetbanks = mysqli_num_rows($Recordsetbanks);
+?>
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>لوحة التحكم</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+
+
+<style>
+body {margin:0;font-family:Arial}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+  
+  
+  
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index:99;
+
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 17px;    
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.topnav a:hover, .dropdown:hover .dropbtn {
+  background-color: #555;
+  color: white;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child), .dropdown .dropbtn {
+    display: none;
+  }
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .topnav.responsive .dropdown {float: none;}
+  .topnav.responsive .dropdown-content {position: relative;}
+  .topnav.responsive .dropdown .dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+</style>
+
+
+
+
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+</style>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.pill-nav a {
+	display: block;
+	color: black;
+	padding: 14px;
+	text-decoration: none;
+	font-size: 17px;
+	border-radius: 5px;
+	margin-left: 0px;  
+  
+  
+}
+
+.pill-nav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.pill-nav a.active {
+  background-color: dodgerblue;
+  color: white;
+}
+</style>
+<style>
+* {box-sizing: border-box;}
+
+body { 
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#navbar {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  padding: 90px 10px;
+  transition: 0.4s;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 99;
+}
+
+#navbar a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+#navbar #logo {
+  font-size: 35px;
+  font-weight: bold;
+  transition: 0.4s;
+}
+
+#navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+#navbar a.active {
+  background-color: dodgerblue;
+  color: white;
+}
+
+#navbar-right {
+  float: right;
+}
+
+@media screen and (max-width: 580px) {
+  #navbar {
+    padding: 20px 10px !important;
+  }
+  #navbar a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  #navbar-right {
+    float: none;
+  }
+}
+dddd {
+	font-size: 36px;
+}
+.w3-light-grey #myTopnav div {
+	font-size: large;
+}
+.w3-light-grey #myTopnav div {
+	font-weight: bold;
+}
+.w3-light-grey #myTopnav div {
+	color: #FFF;
+}
+.w3-light-grey #myTopnav div p {
+	font-size: medium;
+}
+.w3-light-grey .w3-content.w3-margin-top .w3-row-padding .w3-third .w3-white.w3-text-grey.w3-card-4 .w3-container p strong {
+	font-size: 24px;
+}
+</style>
+
+</head>
+<body dir="rtl" class="w3-light-grey">
+
+
+<div class="topnav" id="myTopnav" style="">
+  <a href="#home" class="active"><i class="fa fa-fw fa-home"></i></a>
+  <a href="services.php">طلبات المراسلة</a>
+  <a href="complaints.php">الشكاوى</a>
+  <a href="upload.php">رفع المستندات</a>
+  <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+  <div>
+    <p align="center">لوحة التحكم</p>
+  </div>
+</div>
+
+
+
+
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:1400px;" dir="rtl">
+
+  <!-- The Grid -->
+  <div class="w3-row-padding">
+  
+    <!-- Left Column -->
+    <div class="w3-third">
+    
+      <div class="w3-white w3-text-grey w3-card-4">
+        <div class="w3-display-container">
+          <img src="/users/img/<?php echo $row_Recordset1['per_img']; ?>" style="width:100%" alt="Avatar">
+          <div class="w3-display-bottomleft w3-container w3-text-black">
+          
+          </div>
+        </div>
+        <div class="w3-container">
+          <p align="center">مرحباً يا : <?php echo $_SESSION['MM_Username'] ?><br>
+  <strong><?php echo $row_Recordset1['first_name']; ?></strong> <strong><?php echo $row_Recordset1['bname']; ?></strong> <strong><?php echo $row_Recordset1['cname']; ?></strong> <strong><?php echo $row_Recordset1['last_name']; ?></strong>&nbsp; <a href="<?php echo $logoutAction ?>"><i class="fa fa-sign-out" style="font-size:36px"></i></a></p>
+          <hr>
+          <table width="80%" border="0" align="center">
+  <tr>
+    <td><div class="pill-nav">
+            <div align="right"><a href="account.php"><i class="fa fa-user" aria-hidden="true"></i> حسابي </a>
+              <a href="editaccount.php?username=<?php echo $_SESSION['MM_Username'] ?>"><i class="fa fa-edit" aria-hidden="true"></i> تعديل الحساب </a>
+              <a href="changepassword.php?username=<?php echo $_SESSION['MM_Username'] ?>"><i class="fa fa-lock" aria-hidden="true"></i> تغيير كلمة المرور </a></div>
+    </div></td>
+  </tr>
+</table>
+          <br>
+        </div>
+      </div><br>
+
+    <!-- End Left Column -->
+    </div>
+
+    <!-- Right Column -->
+    <div class="w3-twothird">
+    
+      <div class="w3-container w3-card w3-white w3-margin-bottom">
+        <h2 class="w3-text-grey w3-padding-16"></h2>
+        <div class="w3-container">
+          <table width="300" align="center" cellpadding="4" cellspacing="4">
+            <tr>
+              <td align="center" bgcolor="#CCFFFF"><h2>حسابي</h2></td>
+            </tr>
+          </table>
+          <br>
+          
+<form action="<?php echo $editFormAction; ?>" method="post" name="form1" id="form1">
+  <table align="center">
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><strong>البيانات الشخصية:</strong></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="first_name" value="<?php echo htmlentities($row_Recordset1['first_name'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">الاسم:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="bname" value="<?php echo htmlentities($row_Recordset1['bname'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">الاسم الثاني:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="cname" value="<?php echo htmlentities($row_Recordset1['cname'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">الاسم الثالث:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="last_name" value="<?php echo htmlentities($row_Recordset1['last_name'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">الاسم الرابع:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="center" nowrap="nowrap"><a href="photo/<?php echo $row_Recordset1['grad_img']; ?>" target="_new"><img src="../img/<?php echo $row_Recordset1['grad_img']; ?>" alt="" height="220"></a></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="date" name="grad_date" value="<?php echo htmlentities($row_Recordset1['grad_date'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">سنة التخرج:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><select name="grad_place" id="grad_place">
+        <?php
+do {  
+?>
+        <option value="<?php echo $row_Recordsettowns['id']?>"<?php if (!(strcmp($row_Recordsettowns['id'], $row_Recordset1['grad_place']))) {echo "selected=\"selected\"";} ?>><?php echo $row_Recordsettowns['name']?></option>
+        <?php
+} while ($row_Recordsettowns = mysqli_fetch_assoc($Recordsettowns));
+  $rows = mysqli_num_rows($Recordsettowns);
+  if($rows > 0) {
+      mysql_data_seek($Recordsettowns, 0);
+	  $row_Recordsettowns = mysqli_fetch_assoc($Recordsettowns);
+  }
+?>
+      </select></td>
+      </tr>
+    <tr valign="baseline">
+      <td nowrap="nowrap" align="right">جهة التخرج:</td>
+      <td><label for="grad_place"></label>
+        <input type="hidden" name="grad_img" value="<?php echo htmlentities($row_Recordset1['grad_img'], ENT_COMPAT, 'utf-8'); ?>" size="32" />
+        <input type="hidden" name="per_img" value="<?php echo htmlentities($row_Recordset1['per_img'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+    </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="id_card" value="<?php echo htmlentities($row_Recordset1['id_card'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">الرقم الوطني:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="address" value="<?php echo htmlentities($row_Recordset1['address'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">العنوان:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="work_place" value="<?php echo htmlentities($row_Recordset1['work_place'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">مكان العمل:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="mail" value="<?php echo htmlentities($row_Recordset1['mail'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">البريد الالكتروني:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="phone" value="<?php echo htmlentities($row_Recordset1['phone'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">رقم الهاتف:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="mobile" value="<?php echo htmlentities($row_Recordset1['mobile'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">رقم الجوال:</td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><select name="member_type" id="member_type">
+        <option value="خاص" <?php if (!(strcmp("خاص", $row_Recordset1['member_type']))) {echo "selected=\"selected\"";} ?>>خاص</option>
+        <option value="حكومي" <?php if (!(strcmp("حكومي", $row_Recordset1['member_type']))) {echo "selected=\"selected\"";} ?>>حكومي</option>
+      </select></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">نوع العضوية:
+        <label for="member_type"></label></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><select name="member_activity" id="member_activity">
+        <option value="صيدلية" <?php if (!(strcmp("صيدلية", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>صيدلية</option>
+        <option value="شركة أدوية" <?php if (!(strcmp("شركة أدوية", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>شركة أدوية</option>
+        <option value="صيدلي صناعي" <?php if (!(strcmp("صيدلي صناعي", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>صيدلي صناعي</option>
+        <option value="إعلام دوائي" <?php if (!(strcmp("إعلام دوائي", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>إعلام دوائي</option>
+        <option value="-" <?php if (!(strcmp("-", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>-</option>
+        <option value="مستشفى" <?php if (!(strcmp("مستشفى", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>مستشفى</option>
+        <option value="صيدلية عامة" <?php if (!(strcmp("صيدلية عامة", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>صيدلية عامة</option>
+        <option value="مخازن" <?php if (!(strcmp("مخازن", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>مخازن</option>
+        <option value="إداري" <?php if (!(strcmp("إداري", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>إداري</option>
+        <option value="رقابة وتفتيش" <?php if (!(strcmp("رقابة وتفتيش", $row_Recordset1['member_activity']))) {echo "selected=\"selected\"";} ?>>رقابة وتفتيش</option>
+      </select></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">نوع النشاط:
+        <label for="member_activity"></label></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><select name="sub_syndicate" id="sub_syndicate">
+        <?php
+do {  
+?>
+        <option value="<?php echo $row_Recordsettowns['id']?>"<?php if (!(strcmp($row_Recordsettowns['id'], $row_Recordset1['sub_syndicate']))) {echo "selected=\"selected\"";} ?>><?php echo $row_Recordsettowns['name']?></option>
+        <?php
+} while ($row_Recordsettowns = mysqli_fetch_assoc($Recordsettowns));
+  $rows = mysqli_num_rows($Recordsettowns);
+  if($rows > 0) {
+      mysql_data_seek($Recordsettowns, 0);
+	  $row_Recordsettowns = mysqli_fetch_assoc($Recordsettowns);
+  }
+?>
+      </select></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">النقابة الفرعية:
+        <label for="sub_syndicate"></label></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="text" name="payment_no" value="<?php echo htmlentities($row_Recordset1['payment_no'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+    </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><select name="bank" id="bank">
+        <?php
+do {  
+?>
+        <option value="<?php echo $row_Recordsetbanks['id']?>"<?php if (!(strcmp($row_Recordsetbanks['id'], $row_Recordset1['bank']))) {echo "selected=\"selected\"";} ?>><?php echo $row_Recordsetbanks['name']?></option>
+        <?php
+} while ($row_Recordsetbanks = mysqli_fetch_assoc($Recordsetbanks));
+  $rows = mysqli_num_rows($Recordsetbanks);
+  if($rows > 0) {
+      mysql_data_seek($Recordsetbanks, 0);
+	  $row_Recordsetbanks = mysqli_fetch_assoc($Recordsetbanks);
+  }
+?>
+    </select></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">الايداع المصرفي:
+        <label for="bank"></label>
+        <input type="hidden" name="password" value="<?php echo htmlentities($row_Recordset1['password'], ENT_COMPAT, 'utf-8'); ?>" size="32" />
+  <input type="hidden" name="username" value="<?php echo htmlentities($row_Recordset1['username'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><select name="active" id="active">
+        <option value="1" <?php if (!(strcmp(1, $row_Recordset1['active']))) {echo "selected=\"selected\"";} ?>>مفعل</option>
+        <option value="2" <?php if (!(strcmp(2, $row_Recordset1['active']))) {echo "selected=\"selected\"";} ?>>غير مفعل</option>
+      </select></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap">حالة الحساب:
+        <label for="active"></label></td>
+      </tr>
+    <tr valign="baseline">
+      <td colspan="2" align="right" nowrap="nowrap"><input type="hidden" name="deleted" value="<?php echo htmlentities($row_Recordset1['deleted'], ENT_COMPAT, 'utf-8'); ?>" size="32" />
+        <input type="hidden" name="edit_by" value="<?php echo htmlentities($row_Recordset1['edit_by'], ENT_COMPAT, 'utf-8'); ?>" size="32" />
+        <input type="hidden" name="create_by" value="<?php echo htmlentities($row_Recordset1['create_by'], ENT_COMPAT, 'utf-8'); ?>" size="32" />
+        <input type="hidden" name="edit_date" value="<?php echo htmlentities($row_Recordset1['edit_date'], ENT_COMPAT, 'utf-8'); ?>" size="32" />        <input type="hidden" name="create_date" value="<?php echo htmlentities($row_Recordset1['create_date'], ENT_COMPAT, 'utf-8'); ?>" size="32" /></td>
+      </tr>
+  </table>
+  <input type="hidden" name="id" value="<?php echo $row_Recordset1['id']; ?>" />
+  <input type="hidden" name="MM_update" value="form1" />
+  <input type="hidden" name="id" value="<?php echo $row_Recordset1['id']; ?>" />
+</form>
+<p>&nbsp;</p>
+
+        </div>
+      </div>
+
+      <!-- End Right Column -->
+    </div>
+    
+  <!-- End Grid -->
+  </div>
+  
+  <!-- End Page Container -->
+</div>
+
+<footer class="w3-container w3-teal w3-center w3-margin-top">
+  <p>جميع الحقوق محفوظة -  للوحة التحكم 2022</p>
+  <i class="fa fa-facebook-official w3-hover-opacity"></i>
+  <i class="fa fa-instagram w3-hover-opacity"></i>
+  <i class="fa fa-snapchat w3-hover-opacity"></i>
+  <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+  <i class="fa fa-twitter w3-hover-opacity"></i>
+  <i class="fa fa-linkedin w3-hover-opacity"></i>
+  <p>&nbsp;</p>
+</footer>
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+</script>
+</body>
+</html>
+<?php
+mysqli_free_result($Recordset1);
+?>

@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Recordset1" value="name:id;datatype:int,name:ElFara;datatype:string,name:ElKesm;datatype:string,name:Elbaka;datatype:string,name:elbakatitle;datatype:string,name:tamrinatedafia;datatype:string,name:Elmodareb;datatype:string,name:ElmodarebName;datatype:string,name:Elodw;datatype:string,name:TafeelDate;datatype:string,name:MowazafName;datatype:string,name:Total;datatype:string,name:khasm;datatype:string,name:Madfoaa;datatype:string,name:Bakey;datatype:string,name:Notes;datatype:string,name:tarekh;datatype:string" />
+</info>

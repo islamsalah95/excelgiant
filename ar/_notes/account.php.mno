@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Recordset1" value="name:id;datatype:int,name:member_type;datatype:string,name:grad_img;datatype:string,name:per_img;datatype:string,name:aname;datatype:string,name:bname;datatype:string,name:cname;datatype:string,name:dname;datatype:string,name:grad_date;datatype:date,name:grad_place;datatype:string,name:id_card;datatype:int,name:address;datatype:string,name:work_place;datatype:string,name:mail;datatype:string,name:phone;datatype:string,name:mobile;datatype:string,name:member_activity;datatype:string,name:sub_syndicate;datatype:int,name:bank;datatype:int,name:payment_no;datatype:string,name:password;datatype:string,name:username;datatype:string,name:active;datatype:int,name:create_date;datatype:datetime,name:edit_date;datatype:datetime,name:create_by;datatype:int,name:edit_by;datatype:int,name:deleted;datatype:int" />
+	<infoitem key="UD_Recordset2" value="name:id;datatype:int,name:name;datatype:string,name:create_date;datatype:datetime,name:edit_date;datatype:datetime,name:create_by;datatype:int,name:edit_by;datatype:int" />
+	<infoitem key="UD_Recordsettowns" value="name:id;datatype:int,name:name;datatype:string,name:create_date;datatype:datetime,name:edit_date;datatype:datetime,name:create_by;datatype:int,name:edit_by;datatype:int" />
+	<infoitem key="UD_Recordsetbanks" value="name:id;datatype:int,name:name;datatype:string,name:number;datatype:string,name:create_date;datatype:datetime,name:edit_date;datatype:datetime,name:create_by;datatype:int,name:edit_by;datatype:int" />
+</info>

@@ -1,0 +1,141 @@
+@charset "utf-8";
+/* CSS Document */
+
+@charset "UTF-8";
+
+@page {
+  size: A4 portrait;
+  margin: 15mm
+}
+
+body {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  row-gap: 5mm;
+  align-content: start;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  margin: 0;
+  padding: 0
+}
+
+p {
+  font-size: inherit
+}
+
+section {
+  grid-column: 1/span all;
+  height: -webkit-max-content;
+  height: max-content;
+  font-size: inherit
+}
+
+table {
+  border-collapse: collapse;
+  break-inside: auto
+}
+
+table td,
+table th {
+  padding: 1.5mm;
+  vertical-align: top;
+  font-size: inherit
+}
+
+table thead {
+  font-weight: 700;
+  display: table-header-group
+}
+
+table th {
+  text-align: center;
+  vertical-align: bottom
+}
+
+table td,
+table th,
+table tr {
+  break-inside: avoid;
+  break-after: auto
+}
+
+.address {
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column
+}
+
+.address p {
+  margin: .5em 0
+}
+
+.address p.addressheader {
+  margin-bottom: 0;
+  font-style: italic
+}
+
+.address span {
+  margin-right: 1rem
+}
+
+.amt {
+  text-align: right
+}
+
+.date {
+  align-self: start;
+  grid-column: 2/span 1
+}
+
+.invoice-number {
+  grid-column: span 1
+}
+
+.items {
+  margin: 1cm 0
+}
+
+.metadata,
+.subtotals {
+  grid-column: span 2;
+  padding: 1.5mm;
+  display: grid;
+  grid-template-columns: 1fr 2fr
+}
+
+.signature {
+  display: -webkit-box;
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.signature div {
+  width: 60%;
+  border-bottom: 1px solid #000;
+  display: -webkit-box;
+  display: flex;
+  align-items: flex-end
+}
+
+.signature div p {
+  min-width: 30%;
+  margin-bottom: 0;
+}
+
+.subtotals {
+  grid-template-columns: 1fr 1fr;
+  text-align: right
+}
+
+.subtotals > b {
+  text-align: left
+}
+
+.title {
+  font-size: 24pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  align-self: center
+}

@@ -1,0 +1,10 @@
+<?php
+mysqli_free_result($rsslidat);
+mysqli_free_result($Recordset1);
+mysqli_free_result($rssingle);
+mysqli_free_result($rsgroup);
+mysqli_free_result($rsparteners);
+mysqli_free_result($rscamp);
+mysqli_free_result($rssiteinfo);
+mysqli_free_result($rsaims);
+?>

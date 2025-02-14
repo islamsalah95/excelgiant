@@ -1,0 +1,6 @@
+[02-Jul-2024 06:31:54 UTC] PHP Deprecated:  mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home4/excelgia/new.excelgiants.site/store/connections/connection.php on line 9
+[02-Jul-2024 06:31:54 UTC] PHP Warning:  mysql_pconnect(): Access denied for user 'root'@'localhost' (using password: NO) in /home4/excelgia/new.excelgiants.site/store/connections/connection.php on line 9
+[02-Jul-2024 06:31:54 UTC] PHP Fatal error:  Access denied for user 'root'@'localhost' (using password: NO) in /home4/excelgia/new.excelgiants.site/store/connections/connection.php on line 9
+[02-Jul-2024 06:32:23 UTC] PHP Deprecated:  mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home4/excelgia/new.excelgiants.site/store/connections/connection.php on line 9
+[02-Jul-2024 06:32:30 UTC] PHP Deprecated:  mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home4/excelgia/new.excelgiants.site/store/connections/connection.php on line 9
+[02-Jul-2024 06:37:34 UTC] PHP Deprecated:  mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home4/excelgia/new.excelgiants.site/store/connections/connection.php on line 9

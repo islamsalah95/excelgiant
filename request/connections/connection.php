@@ -9,10 +9,8 @@
 // $connection = mysql_pconnect($hostname_connection, $username_connection, $password_connection) or trigger_error(mysql_error(),E_USER_ERROR); 
 // mysql_set_charset("UTF8", $connection);
 
-$hostname = "localhost";
-$username = "root";
-$password = "";
-$database = "excelgia_mahmdata";
+include_once('../conn.php');
+
 
 // Use a persistent MySQLi connection (by prepending "p:" to the hostname)
 $connection = mysqli_connect("p:" . $hostname, $username, $password, $database);

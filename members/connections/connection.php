@@ -12,10 +12,8 @@
 
 
 
-$hostname = "localhost";
-$username = "root";
-$password = "";
-$database = "excelgia_mahmdata";
+include_once('../conn.php');
+
 
 // Use a persistent MySQLi connection (by prepending "p:" to the hostname)
 $connection = mysqli_connect("p:" . $hostname, $username, $password, $database);

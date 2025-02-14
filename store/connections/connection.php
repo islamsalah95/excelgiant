@@ -10,10 +10,8 @@
 // mysql_set_charset("UTF8", $connection);
 
 
-$hostname = "localhost";
-$username = "root";
-$password = "";
-$database = "excelgia_mahmdata";
+include_once('../conn.php');
+
 
 // 'p:' before the hostname enables a persistent connection.
 $connection = mysqli_connect("p:" . $hostname, $username, $password, $database);

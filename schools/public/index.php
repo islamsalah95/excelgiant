@@ -1,55 +1,31 @@
 <?php
+session_start();
 
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
+// Load Composer Autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
 
-define('LARAVEL_START', microtime(true));
+// Load configuration files
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../config/database.php';
 
-/*
-|--------------------------------------------------------------------------
-| Check If The Application Is Under Maintenance
-|--------------------------------------------------------------------------
-|
-| If the application is in maintenance / demo mode via the "down" command
-| we will load this file so that any pre-rendered content can be shown
-| instead of starting the framework, which could cause an exception.
-|
-*/
 
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
+// Determine the page (default to 'home')
+// ... existing code to load autoloader and config files
+
+$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+
+if ($page === 'home') {
+    include __DIR__ . '/../views/home.php';
+} else if ($page === 'school_create') {
+    include __DIR__ . '/../views/school_create.php';
+} else if ($page === 'school_edit') {
+    include __DIR__ . '/../views/school_edit.php';
+} else if ($page === 'students') {
+    include __DIR__ . '/../views/students.php';
+} else if ($page === 'student_create') {
+    include __DIR__ . '/../views/student_create.php';
+} else if ($page === 'student_edit') {
+    include __DIR__ . '/../views/student_edit.php';
+} else {
+    include __DIR__ . '/../views/404.php';
 }
-
-/*
-|--------------------------------------------------------------------------
-| Register The Auto Loader
-|--------------------------------------------------------------------------
-|
-| Composer provides a convenient, automatically generated class loader for
-| this application. We just need to utilize it! We'll simply require it
-| into the script here so we don't need to manually load our classes.
-|
-*/
-
-require __DIR__.'/../vendor/autoload.php';
-
-/*
-|--------------------------------------------------------------------------
-| Run The Application
-|--------------------------------------------------------------------------
-|
-| Once we have the application, we can handle the incoming request using
-| the application's HTTP kernel. Then, we will send the response back
-| to this client's browser, allowing them to enjoy our application.
-|
-*/
-
-$app = require_once __DIR__.'/../bootstrap/app.php';
-
-$kernel = $app->make(Kernel::class);
-
-$response = $kernel->handle(
-    $request = Request::capture()
-)->send();
-
-$kernel->terminate($request, $response);

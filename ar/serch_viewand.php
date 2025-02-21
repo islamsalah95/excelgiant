@@ -1,4 +1,4 @@
-<?php require_once('connections/connection.php'); ?>
+<?php require_once('./connections/connection.php'); ?>
 <?php
 // *** Validate request to login to this site.
 if (!isset($_SESSION)) {

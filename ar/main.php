@@ -1,4 +1,5 @@
-<?php require_once('connections/connection.php'); ?>
+<?php require_once('./connections/connection.php'); ?>
+
 <?php
 //initialize the session
 if (!isset($_SESSION)) {
@@ -220,16 +221,19 @@ a:active {
               <td align="center"><h2><strong><a href="sanf_view.php">الأصناف</a></strong></h2></td>
               <td align="center"><h2><strong><a href="feaat_view.php">الأقسام</a></strong></h2></td>
             </tr>
+
+
             <tr>
-              <td align="center">&nbsp;</td>
-              <td align="center"><img src="request.png" width="100" /></td>
-              <td align="center">&nbsp;</td>
+              <td width="20%" align="center"><strong><img src="request.png" alt="" width="100" /></strong></td>
+              <td width="20%" height="125" align="center" valign="middle"><img src="schools.webp" alt="" width="100" /></td>
+              <td width="20%" height="125" align="center" valign="middle"><img src="tabels.webp" alt="" width="100" /></td>
             </tr>
             <tr>
-              <td align="center">&nbsp;</td>
-              <td align="center"><h2><strong><a href="https://new.excelgiants.site/members/complaints_view.php">الطلبات</a></strong></h2></td>
-              <td align="center">&nbsp;</td>
+              <td width="20%" align="center" valign="middle"><h2><strong><a  href="https://new.excelgiants.site/members/complaints_view.php">الطلبات</a></strong></h2></td>
+              <td width="20%" align="center" valign="middle"><h2><strong><a  href="https://localhost/excelgiant/schools/schools/index.php?page=home">المدارس</a></strong></h2></td>
+              <td width="20%" align="center" valign="middle"><h2><strong><a  href="https://localhost/excelgiant/schools/index.php?page=export_tabels">تصدير الجداول</a></strong></h2></td>
             </tr>
+            
           </table></td>
         </tr>
     </table></td>

@@ -12,7 +12,7 @@
 
 
 
-include_once('./conn.php');
+include_once(__DIR__ . '/../global_config.php');
 
 
 // 'p:' before the hostname enables a persistent connection.

@@ -1,4 +1,8 @@
-<?php require_once('connections/connection.php'); ?>
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+require_once('connections/connection.php'); ?>
 <?php
 if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
@@ -43,7 +47,6 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
                        GetSQLValueString($_POST['create_by'], "text"),
                        GetSQLValueString($_POST['edit_by'], "text"));
 
-  mysqli_query($connection, $query)($database_connection, $connection);
   $Result1 = mysqli_query($connection,$insertSQL) or die(mysqli_error($connection));
   $insertGoTo =  "complaints.php";
   if (isset($_SERVER['QUERY_STRING'])) {
@@ -53,12 +56,18 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
   header(sprintf("Location: %s", $insertGoTo));
 }
 
-$colname_Recordset1 = $_SESSION['MM_Username'];
+$colname_Recordset1 = "-1";
+if (isset($_SESSION['MM_Username'])) {
+  $colname_Recordset1 = $_SESSION['MM_Username'];
+}
 if (isset($_GET['username'])) {
   $colname_Recordset1 = $_GET['username'];
 }
 
-$colname_Recordset2 = $_SESSION['MM_Username'];
+$colname_Recordset2 = "-1";
+if (isset($_SESSION['MM_Username'])) {
+  $colname_Recordset2 = $_SESSION['MM_Username'];
+}
 if (isset($_GET['username'])) {
   $colname_Recordset2 = $_GET['username'];
 }
@@ -66,7 +75,6 @@ $colname_Recordset2 = "-1";
 if (isset($_GET['create_by'])) {
   $colname_Recordset2 = $_GET['create_by'];
 }
-mysqli_query($connection, $query)($database_connection, $connection);
 $query_Recordset2 = sprintf("SELECT * FROM complaints WHERE create_by = %s", GetSQLValueString($colname_Recordset2, "int"));
 $Recordset2 = mysqli_query($connection,$query_Recordset2) or die(mysqli_error($connection));
 $row_Recordset2 = mysqli_fetch_assoc($Recordset2);

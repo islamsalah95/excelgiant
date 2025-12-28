@@ -12,7 +12,7 @@
 
 
 
-include_once('../conn.php');
+include_once(__DIR__ . '/../../global_config.php');
 
 
 // Use a persistent MySQLi connection (by prepending "p:" to the hostname)
